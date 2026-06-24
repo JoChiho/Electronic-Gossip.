@@ -147,7 +147,7 @@ pyinstaller --onefile --name bagua --console bagua.py
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
-| 0 | 目录清理 + 工作流程文档 | 进行中 |
+| 0 | 目录清理 + 工作流程文档 | 基本完成 |
 | 1 | 架构重构（service 层，为 GUI 做准备） | 待开始 |
 | 2 | Tkinter 简易 GUI | 待开始 |
 | 3 | CLI 参数、历史记录、体验优化 | 待开始 |
