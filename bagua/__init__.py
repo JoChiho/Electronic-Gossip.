@@ -1,6 +1,6 @@
 """bagua — 极简易经八卦占卜 CLI 工具。"""
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 from bagua.divination import parse_coin_input
 from bagua.hexagram import build_hexagram

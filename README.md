@@ -29,7 +29,9 @@ python bagua.py
 也可使用模块方式运行：
 
 ```bash
-python -m bagua
+python -m bagua          # CLI
+python -m bagua.gui      # GUI（Tkinter）
+bagua-gui                # pip install -e . 后
 ```
 
 ## 开发工作流
@@ -63,6 +65,8 @@ Electronic-Gossip/
 │   ├── __init__.py
 │   ├── __main__.py         # python -m bagua
 │   ├── cli.py              # 终端展示层（Rich + input）
+│   ├── gui.py              # Tkinter 图形界面
+│   ├── gui_display.py      # GUI 卦象文本格式化
 │   ├── service.py          # perform_divination() 统一入口
 │   ├── hexagram.py         # 卦象构建
 │   ├── divination.py       # 起卦纯逻辑
@@ -130,7 +134,14 @@ pyinstaller --onefile --name bagua --console bagua.py
 
 ## 问题记录与版本历史
 
-### v0.3.0（当前）
+### v0.4.0（当前）
+
+| 变更 | 说明 |
+|------|------|
+| Tkinter GUI | 图形界面起卦、复制提示词、保存记录 |
+| 双入口 | `python -m bagua`（CLI）/ `python -m bagua.gui`（GUI） |
+
+### v0.3.0
 
 | 变更 | 说明 |
 |------|------|
@@ -163,7 +174,7 @@ pyinstaller --onefile --name bagua --console bagua.py
 |------|------|------|
 | 0 | 目录清理 + 工作流程文档 | 基本完成 |
 | 1 | 架构重构（service 层，为 GUI 做准备） | ✅ 已完成 |
-| 2 | Tkinter 简易 GUI | 待开始 |
+| 2 | Tkinter 简易 GUI | ✅ 已完成 |
 | 3 | CLI 参数、历史记录、体验优化 | 待开始 |
 | 4 | 八字排盘、农历起卦 | 待开始 |
 | 5 | PyInstaller 双版本打包发布 | 待开始 |
