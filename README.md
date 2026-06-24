@@ -6,67 +6,102 @@
 
 ## 功能
 
-- **三种起卦方式**
-  - 铜钱法：支持手动输入（`1`/`2`）与自动模拟投掷
-  - 时间起卦：梅花易数，支持当前时间或自定义时间
-  - 随机起卦：快速生成六爻
+- **三种起卦方式**：铜钱法（手动/自动）、时间起卦、随机起卦
 - **卦象展示**：卦名、上下卦符号、六爻图形与变爻标注
-- **AI 提示词**：结构化输出，可直接复制到 ChatGPT / Claude 等
-- **本地持久化**：用户时区、出生时间、八字、默认问题自动保存
-- **占卜记录**：可选保存为 JSON（`~/.bagua/records/`）
+- **AI 提示词**：结构化输出，可直接复制到大模型
+- **本地持久化**：时区、出生时间、八字、默认问题自动保存
+- **跨平台时区**：Windows 自动安装 `tzdata`，缺失时回退固定 UTC 偏移
 
-## 环境要求
-
-- Python 3.10+
-- 依赖：[rich](https://github.com/Textualize/rich)
-
-## 安装与运行
+## 快速开始
 
 ```bash
 git clone https://github.com/JoChiho/Electronic-Gossip.git
 cd Electronic-Gossip
+
+# Windows 推荐
+.\scripts\setup.ps1
+
+# 或手动安装
 pip install -r requirements.txt
 python bagua.py
 ```
 
+也可使用模块方式运行：
+
+```bash
+python -m bagua
+```
+
+## 开发工作流
+
+### 环境初始化
+
+```powershell
+# Windows：创建 venv + 安装开发依赖
+.\scripts\setup.ps1 -Dev
+```
+
+```bash
+# macOS / Linux
+make install-dev
+```
+
+### 常用命令
+
+| 命令 | 说明 |
+|------|------|
+| `make test` | 运行单元测试 |
+| `make run` | 启动 CLI |
+| `pytest tests/ -v` | 直接运行测试 |
+| `make clean` | 清理 `__pycache__` |
+
+### 项目结构
+
+```
+Electronic-Gossip/
+├── bagua/                  # Python 包
+│   ├── __init__.py
+│   ├── __main__.py         # python -m bagua
+│   ├── cli.py              # 主程序逻辑
+│   └── timezone.py         # 时区解析（含 Windows 兼容）
+├── tests/                  # 单元测试
+├── scripts/setup.ps1       # Windows 环境脚本
+├── .github/workflows/ci.yml
+├── bagua.py                # 向后兼容入口
+├── pyproject.toml
+├── requirements.txt
+├── requirements-dev.txt
+└── Makefile
+```
+
+### CI
+
+推送至 `main` 或提交 PR 时，GitHub Actions 会在 Ubuntu / Windows 上运行测试（Python 3.10 / 3.12 / 3.14）。
+
 ## 使用说明
 
-### 铜钱法输入
-
-每爻输入三枚硬币，用数字即可：
+### 铜钱法
 
 | 输入 | 含义 |
 |------|------|
 | `1` | 阳面（字） |
 | `2` | 阴面（花） |
 
-示例：`1 2 1` → 爻值 8（少阴）
-
-选择铜钱法后，可选手动输入或**自动模拟**（程序随机投掷）。
+示例：`1 2 1`。可选择**手动输入**或**自动模拟**。
 
 ### 时区
 
-启动时可选择地区/时区，起卦时间与出生时间均会标注：
+- 启动时可选择地区/时区
+- 时间输出含 IANA 名称与 UTC 偏移
+- 配置保存在 `~/.bagua/config.json`
 
-```
-2026-06-24 14:30:00 (中国（北京时间 UTC+8）, Asia/Shanghai, UTC+8)
-```
+**Windows 注意**：`zoneinfo` 需要 `tzdata` 包。已列入 `requirements.txt`；若未安装，程序会使用固定偏移回退，不会崩溃。
 
-支持常用地区预设，也可手动输入 IANA 时区名（如 `Europe/Berlin`）。
-
-### 本地配置
-
-用户偏好保存在：
-
-```
-~/.bagua/config.json
+```bash
+pip install tzdata   # 手动补装
 ```
 
-包含：时区、出生时间、生辰八字、默认占卜问题、铜钱法模式（手动/自动）。
-
-再次启动时，按 Enter 即可沿用已保存信息。
-
-示例配置：
+### 配置示例
 
 ```json
 {
@@ -86,43 +121,31 @@ pip install pyinstaller
 pyinstaller --onefile --name bagua --console bagua.py
 ```
 
-输出文件：`dist/bagua.exe`
+## 问题记录与版本历史
 
-## 项目结构
-
-```
-Electronic-Gossip/
-├── bagua.py           # 主程序（单文件）
-├── requirements.txt
-└── README.md
-```
-
-## 测试反馈与更新记录
-
-### v0.2.0（当前）
-
-根据用户测试反馈完成以下改进：
+### v0.2.1（当前）
 
 | 问题 | 状态 | 说明 |
 |------|------|------|
-| 铜钱法只能手动输入，缺少快速模式 | ✅ 已解决 | 新增「自动模拟」选项，可随机投掷三枚铜钱 |
-| 输入「正/反」过于繁琐 | ✅ 已解决 | 改为 `1`（阳）/ `2`（阴），如 `1 2 1` |
-| 起卦/出生时间无时区标注 | ✅ 已解决 | 支持地区选择，时间输出含 IANA 时区与 UTC 偏移 |
-| 每次重复输入用户信息 | ✅ 已解决 | `~/.bagua/config.json` 本地持久化 |
+| Windows 启动崩溃 `ZoneInfoNotFoundError` | ✅ 已修复 | 添加 `tzdata` 依赖 + 固定偏移回退 |
+| 铜钱法缺少自动模拟 | ✅ 已解决 | v0.2.0 |
+| 正/反输入繁琐 | ✅ 已解决 | 改为 `1`/`2` |
+| 时间无时区标注 | ✅ 已解决 | 地区选择 + 完整标注 |
+| 用户信息每次重输 | ✅ 已解决 | `~/.bagua/config.json` |
+| 缺少测试与 CI | ✅ 已解决 | pytest + GitHub Actions |
 
 ### 已知限制
 
-- 时间起卦使用公历数字简化计算，未接入农历/节气换算
-- 生辰八字需用户自行填写，暂未根据出生时间自动排盘
-- Windows 下系统时区自动检测可能不准确，建议首次使用时手动确认
+- 时间起卦使用公历数字简化，未接入农历
+- 八字需手动填写，未自动排盘
+- 固定偏移回退不支持夏令时
 
 ### 后续方向
 
 - [ ] 根据出生时间自动推算八字
-- [ ] 时间起卦支持农历日期输入
-- [ ] 历史占卜记录查看与管理命令
-- [ ] 支持非交互模式（命令行参数一键起卦）
-- [ ] 多语言界面
+- [ ] 农历日期支持
+- [ ] 历史记录管理命令
+- [ ] 非交互 CLI 参数模式
 
 ## License
 
