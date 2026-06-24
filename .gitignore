@@ -11,3 +11,7 @@ venv/
 mcps/
 terminals/
 *.exe
+
+# Grok 工作区重复副本
+2026-*/
+bagua-*/

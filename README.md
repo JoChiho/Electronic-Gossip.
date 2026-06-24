@@ -65,6 +65,7 @@ Electronic-Gossip/
 │   ├── cli.py              # 主程序逻辑
 │   └── timezone.py         # 时区解析（含 Windows 兼容）
 ├── tests/                  # 单元测试
+├── docs/WORKFLOW.txt       # 开发工作流程与路线图
 ├── scripts/setup.ps1       # Windows 环境脚本
 ├── .github/workflows/ci.yml
 ├── bagua.py                # 向后兼容入口
@@ -140,12 +141,18 @@ pyinstaller --onefile --name bagua --console bagua.py
 - 八字需手动填写，未自动排盘
 - 固定偏移回退不支持夏令时
 
-### 后续方向
+### 后续开发
 
-- [ ] 根据出生时间自动推算八字
-- [ ] 农历日期支持
-- [ ] 历史记录管理命令
-- [ ] 非交互 CLI 参数模式
+完整阶段规划、任务拆解与验收标准见 **[docs/WORKFLOW.txt](docs/WORKFLOW.txt)**。
+
+| 阶段 | 内容 | 状态 |
+|------|------|------|
+| 0 | 目录清理 + 工作流程文档 | 进行中 |
+| 1 | 架构重构（service 层，为 GUI 做准备） | 待开始 |
+| 2 | Tkinter 简易 GUI | 待开始 |
+| 3 | CLI 参数、历史记录、体验优化 | 待开始 |
+| 4 | 八字排盘、农历起卦 | 待开始 |
+| 5 | PyInstaller 双版本打包发布 | 待开始 |
 
 ## License
 
