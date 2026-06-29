@@ -40,6 +40,8 @@ def _config_to_context(config: UserConfig, args: CliArgs) -> UserContext:
         calendar_mode=calendar_mode,
         lunar_input=lunar_input,
         include_hexagram_texts=config.include_hexagram_texts,
+        longitude=config.longitude,
+        use_true_solar=config.use_true_solar,
     )
 
 
@@ -198,6 +200,8 @@ def run_headless_divination(args: CliArgs) -> int:
             calendar_mode=ctx.calendar_mode,
             lunar_input=lunar_input,
             include_hexagram_texts=ctx.include_hexagram_texts,
+            longitude=ctx.longitude,
+            use_true_solar=ctx.use_true_solar,
         )
 
     auto_bazi = config.auto_bazi if args.auto_bazi is None else args.auto_bazi

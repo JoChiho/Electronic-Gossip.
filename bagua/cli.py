@@ -165,6 +165,8 @@ def setup_user_context(config: UserConfig) -> tuple[UserContext, UserConfig]:
                     coin_mode=config.coin_mode,
                     calendar_mode=config.calendar_mode,
                     include_hexagram_texts=config.include_hexagram_texts,
+                    longitude=config.longitude,
+                    use_true_solar=config.use_true_solar,
                 ),
                 config,
             )
@@ -200,6 +202,8 @@ def setup_user_context(config: UserConfig) -> tuple[UserContext, UserConfig]:
             coin_mode=config.coin_mode,
             calendar_mode=config.calendar_mode,
             include_hexagram_texts=config.include_hexagram_texts,
+            longitude=config.longitude,
+            use_true_solar=config.use_true_solar,
         ),
         config,
     )
@@ -378,6 +382,8 @@ def collect_divination_params(
         calendar_mode=calendar_mode,
         lunar_input=lunar_input,
         include_hexagram_texts=ctx.include_hexagram_texts,
+        longitude=ctx.longitude,
+        use_true_solar=ctx.use_true_solar,
     )
     return coin_tosses, divination_datetime, coin_mode, updated_ctx
 

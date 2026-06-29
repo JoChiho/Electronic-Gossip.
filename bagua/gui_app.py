@@ -223,6 +223,8 @@ class BaguaGuiApp(GuiFormsMixin, tk.Tk):
                         calendar_mode=ctx.calendar_mode,
                         lunar_input=lunar_input,
                         include_hexagram_texts=ctx.include_hexagram_texts,
+                        longitude=ctx.longitude,
+                        use_true_solar=ctx.use_true_solar,
                     )
 
             result = perform_divination(

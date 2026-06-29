@@ -168,7 +168,11 @@ class GuiFormsMixin:
         self.time_input_var = tk.StringVar()
         self.time_entry = ttk.Entry(self.time_frame, textvariable=self.time_input_var, width=26)
         self.time_entry.grid(row=2, column=1, sticky=tk.W, padx=(10, 0), pady=(10, 0))
-        self.time_hint_label = ttk.Label(self.time_frame, text="公历，如 2026-06-24 14:30", style="Muted.TLabel")
+        self.time_hint_label = ttk.Label(
+            self.time_frame,
+            text="公历，如 2026-06-24 14:30（算卦自动换算节气历）",
+            style="Muted.TLabel",
+        )
         self.time_hint_label.grid(row=2, column=2, sticky=tk.W, padx=(8, 0))
 
     def _bind_autosave(self) -> None:
@@ -232,7 +236,9 @@ class GuiFormsMixin:
         if self.calendar_var.get() == "lunar":
             self.time_hint_label.configure(text="农历，如 2026-05-10 14:30")
         else:
-            self.time_hint_label.configure(text="公历，如 2026-06-24 14:30")
+            self.time_hint_label.configure(
+                text="公历，如 2026-06-24 14:30（算卦自动换算节气历）",
+            )
         self._schedule_save()
 
     def _auto_bazi(self) -> None:
@@ -270,6 +276,8 @@ class GuiFormsMixin:
             coin_mode=self.coin_mode_var.get(),
             calendar_mode=self.calendar_var.get(),
             include_hexagram_texts=self._config.include_hexagram_texts,
+            longitude=self._config.longitude,
+            use_true_solar=self._config.use_true_solar,
         )
 
     def _collect_coin_tosses(self) -> list[list[int]] | None:
@@ -339,5 +347,7 @@ class GuiFormsMixin:
             use_current_time=self.use_now_var.get(),
             time_input=self.time_input_var.get().strip(),
             coin_tosses=self._collect_coin_tosses_state(),
+            longitude=self._config.longitude,
+            use_true_solar=self._config.use_true_solar,
         )
         save_config(self._config)

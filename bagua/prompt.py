@@ -50,6 +50,8 @@ def generate_ai_prompt(
     method: str,
     divination_time: str,
     hexagram: HexagramInfo,
+    *,
+    time_uses_solar_term: bool = False,
 ) -> str:
     question_text = ctx.question.strip() or "（未指定具体问题，请做综合解读）"
     bazi_text = ctx.bazi.strip() or "（未提供）"
@@ -65,6 +67,14 @@ def generate_ai_prompt(
         "",
         "【起卦时间】",
         divination_time,
+    ]
+    if time_uses_solar_term:
+        sections += [
+            "",
+            "（说明：用户以公历习惯输入时刻；起卦计算已换算为节气历并校正真太阳时，",
+            "请按节气历口径解读，勿将公历月日数字直接当作卦数。）",
+        ]
+    sections += [
         "",
         "【起卦方法】",
         method,

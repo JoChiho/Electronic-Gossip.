@@ -8,7 +8,12 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from bagua.data import METHOD_LABELS, TRIGRAMS
-from bagua.lunar_util import CalendarMode, resolve_time_divination_components
+from bagua.lunar_util import (
+    CalendarMode,
+    ResolvedTimeComponents,
+    resolve_time_divination_components,
+)
+from bagua.timezone import TimezoneInfo
 
 if TYPE_CHECKING:
     from _random import Random
@@ -105,12 +110,19 @@ def divinate_by_time(
     *,
     calendar_mode: CalendarMode = "solar",
     lunar_input: str | None = None,
-) -> tuple[list[int], str]:
-    year, month, day, hour, cal_prefix = resolve_time_divination_components(
+    tz: TimezoneInfo | None = None,
+    longitude: float | None = None,
+    use_true_solar: bool = True,
+) -> tuple[list[int], str, ResolvedTimeComponents]:
+    resolved = resolve_time_divination_components(
         dt,
         calendar_mode=calendar_mode,
         lunar_input=lunar_input,
+        tz=tz,
+        longitude=longitude,
+        use_true_solar=use_true_solar,
     )
+    year, month, day, hour = resolved.year, resolved.month, resolved.day, resolved.hour
 
     upper_num = _meihua_trigram_number(year + month + day)
     lower_num = _meihua_trigram_number(year + month + day + hour)
@@ -120,13 +132,18 @@ def divinate_by_time(
     upper = _trigram_by_number(upper_num)
     values = _lines_from_trigrams(lower, upper, changing)
 
-    mode_label = "农历" if calendar_mode == "lunar" else "公历"
-    detail = (
-        f"{cal_prefix}；{mode_label}梅花易数："
-        f"年{year}+月{month}+日{day}={year + month + day}→上卦{upper['name']}；"
-        f"加时{hour}={year + month + day + hour}→下卦{lower['name']}，动爻第{changing}爻"
+    sum_ymd = year + month + day
+    sum_ymdh = sum_ymd + hour
+    formula = (
+        f"年{year}+月{month}+日{day}={sum_ymd}→上卦{upper['name']}；"
+        f"加时{hour}={sum_ymdh}→下卦{lower['name']}，动爻第{changing}爻"
     )
-    return values, f"{METHOD_LABELS['time']}（{detail}）"
+    mode_label = "农历" if calendar_mode == "lunar" else "公历输入·节气历算卦"
+    detail = f"{resolved.user_input_note}；{resolved.calculation_note}；梅花易数：{formula}"
+    if resolved.true_solar_note:
+        detail = f"{detail}；{resolved.true_solar_note}"
+    method_desc = f"{METHOD_LABELS['time']}（{mode_label}：{detail}）"
+    return values, method_desc, resolved
 
 
 def divinate_by_random(rng: Random | None = None) -> tuple[list[int], str]:

@@ -2,6 +2,18 @@
 
 本文件记录 bagua 各版本变更，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.9.0] - 2026-06-29
+
+### Added
+
+- 时间起卦：公历输入不变，算卦自动换算**节气历**（立春换年、寅月起算）
+- **真太阳时**校正（经度修正 + 时差方程）；设置面板可配经度与开关
+- AI 提示词展示用户公历时刻 + 节气历算卦分量，并注明解读口径
+
+### Changed
+
+- 公历时间起卦不再直接用公历月日数字；农历显式输入模式保持原逻辑
+
 ## [0.8.1] - 2026-06-29
 
 ### Changed
@@ -75,6 +87,7 @@
 - 用户信息持久化至 `~/.bagua/config.json`
 - pytest + GitHub Actions CI
 
+[0.9.0]: https://github.com/example/bagua/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/example/bagua/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/example/bagua/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/example/bagua/compare/v0.6.0...v0.7.0

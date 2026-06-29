@@ -43,9 +43,9 @@ def test_divinate_by_time_known_case():
 
     tz = get_timezone("UTC")
     dt = datetime(2026, 6, 24, 14, 30, tzinfo=tz.tzinfo)
-    values, desc = divinate_by_time(dt)
+    values, desc, _resolved = divinate_by_time(dt, tz=tz)
     assert len(values) == 6
-    assert "坤" in desc
+    assert "节气历" in desc
 
 
 def test_divinate_by_time_lunar_mode():
@@ -55,6 +55,8 @@ def test_divinate_by_time_lunar_mode():
 
     tz = get_timezone("Asia/Shanghai", "中国")
     dt = datetime(2026, 6, 24, 14, 30, tzinfo=tz.tzinfo)
-    values, desc = divinate_by_time(dt, calendar_mode="lunar")
+    values, desc, _resolved = divinate_by_time(
+        dt, calendar_mode="lunar", tz=tz,
+    )
     assert len(values) == 6
     assert "农历" in desc

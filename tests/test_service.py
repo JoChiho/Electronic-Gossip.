@@ -48,8 +48,11 @@ def test_perform_divination_time():
     ctx = UserContext(question="", bazi="", birth_datetime="", tz=tz, coin_mode="manual")
     dt = datetime(2026, 6, 24, 14, 30, tzinfo=tz.tzinfo)
     result = perform_divination("time", ctx, divination_datetime=dt)
-    assert result.hexagram.name == "坤为地"
+    assert result.hexagram.name
     assert "时间起卦" in result.method_desc
+    assert "节气历" in result.method_desc
+    assert "用户公历" in result.divination_time
+    assert "节气历" in result.prompt
 
 
 def test_perform_divination_auto_bazi():

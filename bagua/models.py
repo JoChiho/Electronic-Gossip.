@@ -30,6 +30,8 @@ class UserConfig:
     coin_tosses: list[list[str]] = field(
         default_factory=lambda: [["1", "1", "1"] for _ in range(6)]
     )
+    longitude: float | None = None
+    use_true_solar: bool = True
 
 
 @dataclass
@@ -42,6 +44,8 @@ class UserContext:
     calendar_mode: str = "solar"
     lunar_input: str | None = None
     include_hexagram_texts: bool = True
+    longitude: float | None = None
+    use_true_solar: bool = True
 
 
 @dataclass

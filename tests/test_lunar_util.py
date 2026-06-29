@@ -29,13 +29,14 @@ def test_solar_to_lunar_components():
 def test_resolve_lunar_input_mode():
     tz = get_timezone("Asia/Shanghai", "中国")
     dt = datetime(2026, 6, 24, 14, 30, tzinfo=tz.tzinfo)
-    y, m, d, h, prefix = resolve_time_divination_components(
+    resolved = resolve_time_divination_components(
         dt,
         calendar_mode="lunar",
         lunar_input="2026-05-10 14:30",
+        tz=tz,
     )
-    assert y == 2026 and m == 5 and d == 10
-    assert "农历" in prefix
+    assert resolved.year == 2026 and resolved.month == 5 and resolved.day == 10
+    assert "农历" in resolved.user_input_note
 
 
 def test_resolve_lunar_invalid_input_raises():
