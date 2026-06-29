@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from bagua.true_solar import default_longitude
 
+
 # 北纬为正、南纬为负；东经为正、西经为负
 @dataclass(frozen=True)
 class CityCoord:

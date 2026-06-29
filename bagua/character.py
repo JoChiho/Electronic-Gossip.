@@ -5,7 +5,6 @@ from __future__ import annotations
 from bagua.data import METHOD_LABELS
 from bagua.divination import divinate_by_numbers
 from bagua.stroke_data import (
-    STROKE_MODE_LABELS,
     STROKE_MODES,
     format_stroke_preview,
     get_stroke_count,

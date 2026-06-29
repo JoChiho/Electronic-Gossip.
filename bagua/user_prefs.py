@@ -3,17 +3,10 @@
 from __future__ import annotations
 
 from bagua.divination import parse_coin_input
+from bagua.divination.registry import METHOD_CLI_NUM_TO_KEY, METHOD_KEY_TO_CLI_NUM
 
-METHOD_NUM_TO_KEY = {
-    "1": "coin",
-    "2": "time",
-    "3": "random",
-    "4": "number",
-    "5": "manual",
-    "6": "yarrow",
-    "7": "character",
-}
-METHOD_KEY_TO_NUM = {v: k for k, v in METHOD_NUM_TO_KEY.items()}
+METHOD_NUM_TO_KEY = METHOD_CLI_NUM_TO_KEY
+METHOD_KEY_TO_NUM = METHOD_KEY_TO_CLI_NUM
 
 
 def normalize_method(method: str, *, default: str = "coin") -> str:

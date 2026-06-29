@@ -1,7 +1,12 @@
 """非交互 CLI 测试。"""
 
 from bagua.args import parse_cli_args
-from bagua.headless import run_export_record, run_export_records, run_headless_divination, run_list_records
+from bagua.headless import (
+    run_export_record,
+    run_export_records,
+    run_headless_divination,
+    run_list_records,
+)
 
 
 def test_headless_random_output(capsys):

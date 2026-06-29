@@ -27,7 +27,6 @@ def test_prompt_includes_yao_texts():
     from datetime import datetime
 
     from bagua.models import UserContext
-    from bagua.prompt import generate_ai_prompt
     from bagua.service import perform_divination
     from bagua.timezone import get_timezone
 

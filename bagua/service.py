@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from bagua.bazi import maybe_auto_bazi
+from bagua.character import divinate_by_character
 from bagua.divination import (
     divinate_by_numbers,
     divinate_by_random,
@@ -13,12 +14,11 @@ from bagua.divination import (
     divinate_coin,
     divinate_manual,
 )
-from bagua.character import divinate_by_character
-from bagua.yarrow import divinate_yarrow
 from bagua.hexagram import build_hexagram
 from bagua.models import DivinationMethod, DivinationResult, UserContext
 from bagua.prompt import generate_ai_prompt
 from bagua.timezone import format_datetime_with_tz, now_in_timezone
+from bagua.yarrow import divinate_yarrow
 
 if TYPE_CHECKING:
     from _random import Random

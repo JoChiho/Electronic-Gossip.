@@ -13,22 +13,28 @@ from rich.text import Text
 
 from bagua.args import parse_cli_args
 from bagua.bazi import compute_bazi
+from bagua.character import (
+    CHARACTER_STRATEGIES,
+    STRATEGY_LABELS,
+    parse_character_input,
+    resolve_strokes,
+)
 from bagua.cli_guide import (
     METHOD_LABELS,
     show_calendar_mode_guide,
+    show_character_guide,
     show_coin_value_legend,
     show_completion_guide,
+    show_manual_guide,
     show_method_guide,
+    show_number_guide,
     show_pre_result_summary,
     show_quick_start,
-    show_manual_guide,
-    show_number_guide,
-    show_character_guide,
-    show_yarrow_guide,
     show_random_guide,
     show_step,
     show_time_guide,
     show_user_fields_help,
+    show_yarrow_guide,
 )
 from bagua.clipboard import copy_to_clipboard
 from bagua.config import (
@@ -38,15 +44,7 @@ from bagua.config import (
     load_config,
     save_config,
 )
-from bagua.data import YAO_POSITIONS, YAO_VALUE_NAMES
-from bagua.data import TRIGRAMS
-from bagua.stroke_data import STROKE_MODE_LABELS, STROKE_MODES, format_stroke_preview
-from bagua.character import (
-    CHARACTER_STRATEGIES,
-    STRATEGY_LABELS,
-    parse_character_input,
-    resolve_strokes,
-)
+from bagua.data import TRIGRAMS, YAO_POSITIONS, YAO_VALUE_NAMES
 from bagua.divination import (
     coin_tosses_to_display,
     parse_coin_input,
@@ -60,6 +58,7 @@ from bagua.lunar_util import is_lunar_available, parse_lunar_datetime_input
 from bagua.models import DivinationRecord, HexagramInfo, UserConfig, UserContext, YaoInfo
 from bagua.records import save_record
 from bagua.service import perform_divination
+from bagua.stroke_data import STROKE_MODE_LABELS, STROKE_MODES, format_stroke_preview
 from bagua.timezone import (
     TIMEZONE_PRESETS,
     detect_system_timezone_name,
@@ -221,11 +220,16 @@ def select_method(
     default: str = "coin",
 ) -> Literal["coin", "time", "random", "number", "manual", "yarrow", "character"]:
     show_step(console, 2, "选择起卦方式")
-    show_method_guide(console)
     default = normalize_method(default)
     default_label = METHOD_LABELS[default]
-    console.print(f"[dim]直接回车 = 沿用上次：{default_label}[/dim]")
-    console.print("[dim]或输入 1–7 选择其他方式[/dim]\n")
+    console.print(f"[bold]上次起卦方式：{default_label}[/bold] [dim]（与 GUI 保存的 last_method 一致）[/dim]")
+    use_last = console.input("沿用上次方式？[Y/n]: ").strip().lower()
+    if use_last in ("", "y", "yes"):
+        console.print(f"[green]✓[/green] 已选择：{default_label}")
+        return default  # type: ignore[return-value]
+
+    show_method_guide(console)
+    console.print("[dim]输入 1–7 选择，或直接回车沿用上次[/dim]\n")
 
     mapping = {**METHOD_NUM_TO_KEY, "": default}
     while True:

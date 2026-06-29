@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from rich.console import Console
 from rich.table import Table
 
 from bagua.args import CliArgs
+from bagua.character import parse_character_input
 from bagua.clipboard import copy_to_clipboard
 from bagua.config import build_user_context, load_config, save_config
+from bagua.divination import parse_manual_changing, parse_number_input
 from bagua.gui_display import format_hexagram_display
 from bagua.models import DivinationRecord, UserConfig, UserContext
-from pathlib import Path
-
 from bagua.records import (
     delete_record,
     export_record_markdown,
@@ -21,8 +23,6 @@ from bagua.records import (
     save_record,
     search_records,
 )
-from bagua.character import parse_character_input
-from bagua.divination import parse_manual_changing, parse_number_input
 from bagua.service import perform_divination
 from bagua.timezone import label_for_timezone, parse_datetime_input
 from bagua.user_prefs import stored_coin_tosses_to_points

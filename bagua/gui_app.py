@@ -139,7 +139,7 @@ class BaguaGuiApp(GuiFormsMixin, tk.Tk):
         content.add(bottom_pane, weight=3)
 
         top_pane.rowconfigure(0, weight=1)
-        top_pane.columnconfigure(0, weight=0, minsize=int(420 * self._ui_scale))
+        top_pane.columnconfigure(0, weight=0, minsize=int(500 * self._ui_scale))
         top_pane.columnconfigure(1, weight=1)
 
         left = ttk.Frame(top_pane)

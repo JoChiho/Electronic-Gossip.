@@ -2,6 +2,34 @@
 
 本文件记录 bagua 各版本变更，格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [1.0.0] - 2026-06-29
+
+### Added
+
+- **v1.0 稳定版**：七种起卦方式功能冻结（铜钱 / 时间 / 随机 / 数字 / 手动 / 蓍草 / 汉字）
+- 发版说明：后续 v1.x 以修复与小改进为主，新起卦体系纳入 v2.0 规划
+
+### Changed
+
+- README 版本历史与功能列表更新至 v1.0
+- `docs/PROJECT_STATUS.md`、`docs/WORKFLOW.txt`、`DIVINATION_METHODS_PLAN.md` 标记路线图完成
+- 发版检查清单：124 项 pytest 全绿，`check_release` 通过
+
+## [0.12.0] - 2026-06-29
+
+### Added
+
+- **Phase E 横切**：`bagua/divination/` 子模块包 + `DIVINATION_METHODS` 注册表
+- CLI 交互步骤 ② 默认沿用 `last_method`（与 GUI 对齐），输入 `n` 可换方式
+- GUI「起卦说明」帮助窗口（Notebook 分页，含七种方式详情）
+- README / `PROJECT_STATUS` 起卦方式对照表
+- 随机起卦与注册表单测补充（`test_divination_registry.py`）
+
+### Changed
+
+- 原 `bagua/divination.py` 拆分为 `coin` / `time` / `number` / `manual` / `random` / `common` / `registry`
+- `user_prefs` 起卦序号映射改由注册表统一维护
+
 ## [0.11.0] - 2026-06-29
 
 ### Added

@@ -6,11 +6,15 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 
 from bagua.bazi import compute_bazi
-from bagua.config import CONFIG_PATH, save_config
 from bagua.character import CHARACTER_STRATEGIES, STRATEGY_LABELS, resolve_strokes
+from bagua.config import CONFIG_PATH, save_config
 from bagua.data import MANUAL_CHANGING_OPTIONS, TRIGRAM_SELECT_OPTIONS
-from bagua.stroke_data import STROKE_MODE_LABELS, STROKE_MODES, format_stroke_preview
-from bagua.divination import parse_manual_changing, parse_number_input, parse_trigram_index, tosses_to_yao_value
+from bagua.divination import (
+    parse_manual_changing,
+    parse_number_input,
+    parse_trigram_index,
+    tosses_to_yao_value,
+)
 from bagua.locations import (
     LOCATION_CUSTOM,
     LOCATION_FOLLOW_TZ,
@@ -24,12 +28,14 @@ from bagua.locations import (
     resolve_longitude,
 )
 from bagua.models import UserConfig, UserContext
+from bagua.stroke_data import STROKE_MODE_LABELS, STROKE_MODES, format_stroke_preview
 from bagua.timezone import (
     TIMEZONE_PRESETS,
     detect_system_timezone_name,
     get_timezone,
     label_for_timezone,
 )
+from bagua.true_solar import default_longitude
 
 
 class GuiFormsMixin:
@@ -136,6 +142,7 @@ class GuiFormsMixin:
             width=18,
         )
         self.birth_location_combo.grid(row=4, column=1, sticky=tk.W, padx=(10, 0), pady=(10, 0))
+        self.birth_location_combo.bind("<<ComboboxSelected>>", self._on_birth_location_selected)
 
         ttk.Label(frame, text="出生地坐标", style="Field.TLabel").grid(row=5, column=0, sticky=tk.W, pady=(8, 0))
         coord_row = ttk.Frame(frame, style="Card.TFrame")
@@ -166,8 +173,17 @@ class GuiFormsMixin:
 
         frame.columnconfigure(1, weight=1)
 
+    def _show_method_help(self) -> None:
+        from bagua.gui_method_help import show_method_help_dialog
+
+        show_method_help_dialog(self, current_method=self.method_var.get())
+
     def _build_method_section(self, parent: ttk.Frame) -> None:
         frame = self._section(parent, "起卦方式")
+
+        header = ttk.Frame(frame, style="Card.TFrame")
+        header.grid(row=0, column=0, columnspan=3, sticky=tk.EW)
+        ttk.Button(header, text="起卦说明", command=self._show_method_help).pack(side=tk.RIGHT)
 
         self.method_var = tk.StringVar(value="coin")
         methods = [
@@ -179,21 +195,24 @@ class GuiFormsMixin:
             ("yarrow", "蓍草法"),
             ("character", "汉字起卦"),
         ]
-        method_row = ttk.Frame(frame, style="Card.TFrame")
-        method_row.grid(row=0, column=0, columnspan=3, sticky=tk.W)
-        for val, label in methods:
+        method_grid = ttk.Frame(frame, style="Card.TFrame")
+        method_grid.grid(row=1, column=0, columnspan=3, sticky=tk.EW)
+        cols_per_row = 4
+        for i, (val, label) in enumerate(methods):
             ttk.Radiobutton(
-                method_row,
+                method_grid,
                 text=label,
                 variable=self.method_var,
                 value=val,
                 command=self._on_method_changed,
-            ).pack(side=tk.LEFT, padx=(0, 14))
+            ).grid(row=i // cols_per_row, column=i % cols_per_row, sticky=tk.W, padx=(0, 12), pady=2)
 
-        ttk.Label(frame, text="铜钱模式", style="Field.TLabel").grid(row=1, column=0, sticky=tk.W, pady=(10, 0))
         self.coin_mode_var = tk.StringVar(value="manual")
-        coin_row = ttk.Frame(frame, style="Card.TFrame")
-        coin_row.grid(row=1, column=1, columnspan=2, sticky=tk.W, padx=(10, 0), pady=(10, 0))
+        self.coin_mode_frame = ttk.Frame(frame, style="Card.TFrame")
+        self.coin_mode_frame.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(10, 0))
+        ttk.Label(self.coin_mode_frame, text="铜钱模式", style="Field.TLabel").pack(side=tk.LEFT)
+        coin_row = ttk.Frame(self.coin_mode_frame, style="Card.TFrame")
+        coin_row.pack(side=tk.LEFT, padx=(10, 0))
         for val, label in [("manual", "手动（1=阳 2=阴）"), ("auto", "自动模拟")]:
             ttk.Radiobutton(
                 coin_row,
@@ -298,6 +317,7 @@ class GuiFormsMixin:
             width=18,
         )
         self.div_location_combo.grid(row=5, column=1, sticky=tk.W, padx=(10, 0), pady=(10, 0))
+        self.div_location_combo.bind("<<ComboboxSelected>>", self._on_div_location_selected)
 
         ttk.Label(self.time_frame, text="起卦地坐标", style="Field.TLabel").grid(
             row=6, column=0, sticky=tk.W, pady=(8, 0),
@@ -559,10 +579,10 @@ class GuiFormsMixin:
             self.coin_mode_var,
             self.calendar_var,
             self.time_input_var,
-            self.birth_lon_var,
-            self.div_lon_var,
         ):
             var.trace_add("write", lambda *_: self._schedule_save())
+        self.birth_lon_var.trace_add("write", self._on_birth_lon_var_changed)
+        self.div_lon_var.trace_add("write", self._on_div_lon_var_changed)
         self.birth_location_var.trace_add("write", self._on_birth_location_var_changed)
         self.div_location_var.trace_add("write", self._on_div_location_var_changed)
         self.use_now_var.trace_add("write", lambda *_: self._schedule_save())
@@ -606,17 +626,65 @@ class GuiFormsMixin:
         display_lon = effective_lon if effective_lon is not None else lon
         self.div_coord_hint.configure(text=display_coord_hint(display_lon, iana, lat))
 
+    def _on_birth_location_selected(self, _event: object | None = None) -> None:
+        if self._loading_form:
+            return
+        self._sync_birth_location_ui()
+
+    def _on_div_location_selected(self, _event: object | None = None) -> None:
+        if self._loading_form:
+            return
+        self._sync_div_location_ui()
+
     def _on_birth_location_var_changed(self, *_args: object) -> None:
         if self._loading_form:
             return
-        self.after_idle(self._refresh_birth_coord_display)
-        self._schedule_save()
+        self._sync_birth_location_ui()
 
     def _on_div_location_var_changed(self, *_args: object) -> None:
         if self._loading_form:
             return
-        self.after_idle(self._refresh_div_coord_display)
+        self._sync_div_location_ui()
+
+    def _on_birth_lon_var_changed(self, *_args: object) -> None:
+        if self._loading_form:
+            return
+        if self._current_birth_location() == LOCATION_CUSTOM:
+            self._refresh_birth_coord_display()
         self._schedule_save()
+
+    def _on_div_lon_var_changed(self, *_args: object) -> None:
+        if self._loading_form:
+            return
+        if self._current_div_location() == LOCATION_CUSTOM:
+            self._refresh_div_coord_display()
+        self._schedule_save()
+
+    def _sync_birth_location_ui(self) -> None:
+        location = self._current_birth_location()
+        if location == LOCATION_CUSTOM:
+            self.birth_lon_entry.configure(state="normal")
+            if not self.birth_lon_var.get().strip():
+                iana, _ = self._selected_birth_timezone()
+                self.birth_lon_var.set(f"{default_longitude(iana):.2f}")
+        else:
+            self.birth_lon_entry.configure(state="readonly")
+        self._refresh_birth_coord_display()
+        if not self._loading_form:
+            self._schedule_save()
+
+    def _sync_div_location_ui(self) -> None:
+        location = self._current_div_location()
+        if location == LOCATION_CUSTOM:
+            self.div_lon_entry.configure(state="normal")
+            if not self.div_lon_var.get().strip():
+                iana, _ = self._selected_divination_timezone()
+                self.div_lon_var.set(f"{default_longitude(iana):.2f}")
+        else:
+            self.div_lon_entry.configure(state="readonly")
+        self._refresh_div_coord_display()
+        if not self._loading_form:
+            self._schedule_save()
 
     def _on_birth_tz_changed(self) -> None:
         if self._current_birth_location() == LOCATION_FOLLOW_TZ:
@@ -666,8 +734,15 @@ class GuiFormsMixin:
         if CONFIG_PATH.exists():
             self.status_var.set(f"已自动保存 · {CONFIG_PATH.name}")
 
+    def _update_coin_mode_visibility(self) -> None:
+        if self.method_var.get() == "coin":
+            self.coin_mode_frame.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(10, 0))
+        else:
+            self.coin_mode_frame.grid_forget()
+
     def _on_method_changed(self) -> None:
         method = self.method_var.get()
+        self._update_coin_mode_visibility()
         self.coin_frame.pack_forget()
         self.time_frame.pack_forget()
         self.number_frame.pack_forget()
@@ -890,6 +965,8 @@ class GuiFormsMixin:
             if birth_loc not in LOCATION_OPTIONS:
                 birth_loc = default_city_for_timezone(cfg.timezone)
             self.birth_location_var.set(birth_loc)
+            if birth_loc == LOCATION_CUSTOM and cfg.birth_longitude is not None:
+                self.birth_lon_var.set(f"{cfg.birth_longitude:.2f}")
 
             div_iana = cfg.divination_timezone or cfg.timezone
             div_loc = cfg.divination_location or infer_location_label(
@@ -898,11 +975,13 @@ class GuiFormsMixin:
             if div_loc not in LOCATION_OPTIONS:
                 div_loc = default_city_for_timezone(div_iana)
             self.div_location_var.set(div_loc)
+            if div_loc == LOCATION_CUSTOM and cfg.divination_longitude is not None:
+                self.div_lon_var.set(f"{cfg.divination_longitude:.2f}")
 
             self.use_true_solar_birth_var.set(cfg.use_true_solar_birth)
             self.use_true_solar_div_var.set(cfg.use_true_solar_divination)
-            self._refresh_birth_coord_display()
-            self._refresh_div_coord_display()
+            self._sync_birth_location_ui()
+            self._sync_div_location_ui()
 
             self._on_method_changed()
             self._on_use_now_changed()

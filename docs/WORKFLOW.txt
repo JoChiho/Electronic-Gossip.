@@ -1,8 +1,8 @@
 ================================================================================
   bagua 项目开发工作流程（Roadmap & Workflow）
-  版本：v1.0
-  更新日期：2026-06-24
-  当前代码版本：v0.9.0
+  版本：v1.1
+  更新日期：2026-06-29
+  当前代码版本：v1.0.0（稳定版）
 ================================================================================
 
 【文档用途】
@@ -68,7 +68,7 @@
   │   ├── data.py              # TRIGRAMS、HEXAGRAM_NAMES 等常量
   │   ├── models.py            # UserConfig、HexagramInfo、DivinationResult
   │   ├── hexagram.py          # build_hexagram() 纯函数
-  │   ├── divination.py        # 起卦纯逻辑（无 console）
+  │   ├── divination/          # 起卦纯逻辑子模块 + registry
   │   ├── prompt.py            # generate_ai_prompt()
   │   ├── config.py            # 配置读写
   │   ├── service.py           # perform_divination() 统一入口 ★核心
@@ -293,10 +293,10 @@
   阶段 3  [已完成]  体验增强（v0.5.0，2026-06-24）
   阶段 4  [已完成]  易学功能深化（v0.6.0，2026-06-24）
   阶段 5  [已完成]  打包发布（v0.7.0，2026-06-24）
+  起卦扩展 [已完成]  Phase A–E + v1.0.0 稳定版（2026-06-29）
 
   持续更新文档：docs/PROJECT_STATUS.md
-  最后更新人：AI Assistant
-  下次评审：v0.8.0 规划启动时
+  维护模式：v1.x 修复与小改进；新起卦体系见 DIVINATION_METHODS_PLAN 第三梯队（v2.0+）
 
 ================================================================================
   END OF WORKFLOW

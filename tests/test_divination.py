@@ -6,6 +6,7 @@ from bagua.divination import (
     auto_coin_yao_values,
     coin_yao_values_from_tosses,
     divinate_by_numbers,
+    divinate_by_random,
     divinate_by_time,
     divinate_coin,
     divinate_manual,
@@ -107,6 +108,25 @@ def test_divinate_manual_pure_qian_static():
     assert hexagram.name == "乾为天"
     assert hexagram.changed_hexagram is None
     assert "无动爻" in desc
+
+
+def test_divinate_by_time_formula_in_desc():
+    from datetime import datetime
+
+    from bagua.timezone import get_timezone
+
+    tz = get_timezone("UTC")
+    dt = datetime(2026, 1, 15, 9, 0, tzinfo=tz.tzinfo)
+    _values, desc, _resolved = divinate_by_time(dt, tz=tz)
+    assert "动爻第" in desc
+    assert "上卦" in desc or "→上卦" in desc
+
+
+def test_divinate_by_random_from_divination_module():
+    rng = random.Random(99)
+    values, desc = divinate_by_random(rng)
+    assert len(values) == 6
+    assert desc == "随机起卦"
 
 
 def test_divinate_by_time_lunar_mode():

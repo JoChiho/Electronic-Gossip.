@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from bagua.hexagram_texts import get_hexagram_summary
 from bagua.models import HexagramInfo, UserContext
-from bagua.yao_texts import format_yao_texts_block
 from bagua.timezone import TimezoneInfo, format_utc_offset
+from bagua.yao_texts import format_yao_texts_block
 
 
 def _format_birth_block(

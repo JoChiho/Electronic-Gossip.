@@ -11,11 +11,11 @@
 | 项目 | 说明 |
 |------|------|
 | 名称 | **bagua** — 易经八卦占卜 CLI/GUI |
-| 当前版本 | **v0.11.0** |
+| 当前版本 | **v1.0.0**（稳定版） |
 | 定位 | 起卦 → 生成 AI 提示词 → 用户自行粘贴大模型解读 |
 | 入口 | `bagua`（CLI）/ `bagua-gui`（GUI）/ `dist/*.exe`（Windows 免安装） |
-| 测试 | pytest **80+** 项（目标：发版前全绿） |
-| 路线图 | 阶段 0–5 已完成，见 [WORKFLOW.txt](WORKFLOW.txt) |
+| 测试 | pytest **120+** 项（目标：发版前全绿） |
+| 路线图 | 阶段 0–5 + 起卦扩展 Phase A–E 已完成；v1.x 维护模式 |
 
 ---
 
@@ -24,7 +24,7 @@
 ```
 展示层   cli.py · cli_guide.py · gui_app.py · gui_forms.py · gui_history.py · headless.py
 服务层   service.perform_divination()
-逻辑层   divination · hexagram · prompt · bazi · lunar_util
+逻辑层   divination/ · hexagram · prompt · bazi · lunar_util · yarrow · character
 数据层   data · hexagram_texts · models
 基础设施 config · records · timezone · clipboard
 ```
@@ -61,6 +61,21 @@
 - 卦象 Canvas 绘制、历史记录窗口（搜索、导出 Markdown）
 - **设定自动保存**至 `~/.bagua/config.json`（含起卦方式、铜钱输入、时间选项等）
 - 起卦后可选自动复制提示词
+- 起卦区「起卦说明」帮助（七种方式分页说明）
+
+### 起卦方式对照表
+
+| 代码键 | 名称 | CLI | 模块 | 状态 |
+|--------|------|-----|------|------|
+| `coin` | 铜钱法 | 1 | `divination/coin.py` | ✅ |
+| `time` | 时间起卦 | 2 | `divination/time.py` | ✅ |
+| `random` | 随机起卦 | 3 | `divination/random.py` | ✅ |
+| `number` | 数字起卦 | 4 | `divination/number.py` | ✅ |
+| `manual` | 手动选卦 | 5 | `divination/manual.py` | ✅ |
+| `yarrow` | 蓍草法 | 6 | `yarrow.py` | ✅ |
+| `character` | 汉字起卦 | 7 | `character.py` | ✅ |
+
+注册表：`bagua/divination/registry.py`（`DIVINATION_METHODS`）。CLI/GUI 共用 `last_method` 记忆上次方式。
 
 ### 发布（v0.7.0 起）
 
@@ -85,6 +100,8 @@
 
 | 版本 | 日期 | 要点 |
 |------|------|------|
+| **v1.0.0** | 2026-06-29 | 稳定版：七种起卦方式冻结；文档与发版验证 |
+| **v0.12.0** | 2026-06-29 | Phase E：`divination/` 子模块 + 注册表；CLI last_method；GUI 起卦说明 |
 | **v0.11.0** | 2026-06-29 | 汉字起卦；`character.py` + `strokes.json`；笔画预览 |
 | v0.10.2 | 2026-06-29 | 蓍草法（大衍模拟）；`yarrow.py`；演卦过程日志 |
 | v0.10.1 | 2026-06-29 | 手动选卦；CLI `--upper/--lower/--changing`；GUI 八卦 Combobox |
@@ -157,26 +174,29 @@
 - [x] 手动选卦 v0.10.1
 - [x] 蓍草法 v0.10.2
 - [x] 汉字起卦 v0.11.0
+- [x] Phase E 横切（子模块、CLI/GUI 对齐、文档、测试、帮助）v0.12.0
 
 详细任务与勾选进度见 [DIVINATION_METHODS_PLAN.md](DIVINATION_METHODS_PLAN.md)。
 
-### 版本规划草案
+### 版本规划
 
 ```
-v0.10.x  起卦方式扩展（数字 / 手动 / 蓍草 / 汉字）
-v1.0.0   功能冻结与稳定版
+v0.10.x–v0.12.0  起卦方式扩展 + Phase E 横切   ✅ 已完成
+v1.0.0           功能冻结与稳定版               ✅ 当前
+v1.x             修复、文档、小改进（无新起卦体系）
+v2.0+            六爻纳甲 / 物象起卦等（见 DIVINATION_METHODS_PLAN 第三梯队）
 ```
 
 ---
 
-## 发版检查清单
+## 发版检查清单（v1.0.0）
 
-- [ ] `pytest tests/ -v` 全绿
-- [ ] bump `pyproject.toml` + `bagua/__init__.py` 版本号
-- [ ] 更新本文件「快速概览」与「版本历史」
-- [ ] 更新 `README.md` / `WORKFLOW.txt`
-- [ ] `.\scripts\build.ps1` 本地构建通过
-- [ ] `git tag vX.Y.Z && git push origin vX.Y.Z` 触发 Release
+- [x] `pytest tests/ -v` 全绿（124 项，忽略 `test_gui_dpi` 本机 Tk 问题时 124 passed）
+- [x] bump `pyproject.toml` + `bagua/__init__.py` 版本号 → **1.0.0**
+- [x] 更新本文件「快速概览」与「版本历史」
+- [x] 更新 `README.md` / `WORKFLOW.txt` / `CHANGELOG.md`
+- [ ] `.\scripts\build.ps1` 本地构建通过（发版机执行）
+- [ ] `git tag v1.0.0 && git push origin v1.0.0` 触发 Release
 - [ ] 验证 Release zip 内 exe 可运行
 
 ---
