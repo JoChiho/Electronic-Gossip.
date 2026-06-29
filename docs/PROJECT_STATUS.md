@@ -143,12 +143,20 @@
 - [x] 历史记录搜索、导出 Markdown（v0.9.2）
 - [x] 爻辞全文数据（v0.9.3）
 
+### P4 — 起卦方式扩展
+
+- [ ] 数字起卦 v0.10.0
+- [ ] 手动选卦 v0.10.1
+- [ ] 蓍草法 v0.10.2
+- [ ] 汉字起卦 v0.11.0
+
+详细任务与勾选进度见 [DIVINATION_METHODS_PLAN.md](DIVINATION_METHODS_PLAN.md)。
+
 ### 版本规划草案
 
 ```
-v0.8.x  历史增强 + gui 模块拆分
-v0.9.0  农历/节气精细化
-v1.0.0  功能冻结与稳定版
+v0.10.x  起卦方式扩展（数字 / 手动 / 蓍草 / 汉字）
+v1.0.0   功能冻结与稳定版
 ```
 
 ---
@@ -170,6 +178,7 @@ v1.0.0  功能冻结与稳定版
 - [WORKFLOW.txt](WORKFLOW.txt) — 开发流程与任务拆解
 - [WINDOWS_INSTALL.md](WINDOWS_INSTALL.md) — Windows exe 安装与 SmartScreen
 - [README.md](../README.md) — 用户手册与安装说明
+- [DIVINATION_METHODS_PLAN.md](DIVINATION_METHODS_PLAN.md) — 起卦方式扩展计划与进度
 - [CLEANUP.txt](CLEANUP.txt) — 目录清理记录（如有）
 
 ---
