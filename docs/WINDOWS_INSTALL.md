@@ -33,8 +33,8 @@ CLI 与 GUI **共用**同一配置文件。
 2. 或在 exe 上右键 → **属性** → 勾选「解除锁定」→ 应用 → 再双击运行
 3. 若企业环境禁止未签名程序，请改用源码安装：
    ```powershell
-   git clone https://github.com/JoChiho/Electronic-Gossip.git
-   cd Electronic-Gossip
+   git clone https://github.com/JoChiho/Electronic-Gossip..git
+   cd Electronic-Gossip.
    .\scripts\setup.ps1
    python -m bagua.gui
    ```

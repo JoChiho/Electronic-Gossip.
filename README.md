@@ -18,8 +18,8 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/JoChiho/Electronic-Gossip.git
-cd Electronic-Gossip
+git clone https://github.com/JoChiho/Electronic-Gossip..git
+cd Electronic-Gossip.
 
 # Windows 推荐
 .\scripts\setup.ps1
@@ -180,7 +180,7 @@ bagua --delete-record bagua_20260624_120000.json
 
 ### 从 Release 下载（推荐）
 
-在 [GitHub Releases](https://github.com/JoChiho/Electronic-Gossip/releases) 下载 `bagua-vX.Y.Z-win64.zip`，解压后：
+在 [GitHub Releases](https://github.com/JoChiho/Electronic-Gossip./releases) 下载 `bagua-vX.Y.Z-win64.zip`，解压后：
 
 | 文件 | 说明 |
 |------|------|

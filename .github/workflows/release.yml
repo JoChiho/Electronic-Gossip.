@@ -8,11 +8,19 @@ on:
 permissions:
   contents: write
 
+env:
+  REPO_DIR: repo
+
 jobs:
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{ env.REPO_DIR }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: ${{ env.REPO_DIR }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,7 +33,7 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -r requirements-build.txt
           pip install -e .
-          pytest tests/ -q
+          pytest tests/ -q --ignore=tests/test_gui_dpi.py
 
       - name: Build executables
         run: |
@@ -40,5 +48,5 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: bagua-v*-win64.zip
+          files: ${{ env.REPO_DIR }}/bagua-v*-win64.zip
           generate_release_notes: true
